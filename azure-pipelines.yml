@@ -1,23 +1,10 @@
-# Node.js Express Web App to Linux on Azure
-# Build a Node.js Express app and deploy it to Azure as a Linux web app.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger:
 - main
 
 variables:
-
-  # Azure Resource Manager connection created during pipeline creation
   azureSubscription: '5e0a7643-ea2a-4d77-a5d2-954738383b70'
-
-  # Web app name
-  webAppName: ''
-
-  # Environment name
-  environmentName: ''
-
-  # Agent VM image name
+  webAppName: 'your-web-app-name'         # <-- Replace with actual name
+  environmentName: 'your-env-name'         # <-- Replace with actual env (e.g., production)
   vmImageName: 'ubuntu-latest'
 
 stages:
@@ -47,10 +34,10 @@ stages:
         rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
         includeRootFolder: false
         archiveType: zip
-        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
         replaceExistingArchive: true
 
-    - upload: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+    - publish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
       artifact: drop
 
 - stage: Deploy
@@ -68,7 +55,7 @@ stages:
         deploy:
           steps:
           - task: AzureWebApp@1
-            displayName: 'Azure Web App Deploy: '
+            displayName: 'Azure Web App Deploy'
             inputs:
               azureSubscription: $(azureSubscription)
               appType: webAppLinux
